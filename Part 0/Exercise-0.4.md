@@ -7,6 +7,8 @@ sequenceDiagram
     activate server
     server-->>browser: URL Redirection https://studies.cs.helsinki.fi/exampleapp/notes
     deactivate server
+    Note right of browser: the browser sends the note to the server.
+    Note left of server: the server send a refresh request to the browser.
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
