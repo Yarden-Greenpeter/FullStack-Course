@@ -32,4 +32,4 @@ sequenceDiagram
     server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
     deactivate server
 
-    Note left of server: The server sends the updated date which includes the new note sent at first.
+    Note left of server: The server sends the updated data which includes the new note.
