@@ -5,4 +5,4 @@ The main focus is on building single page applications with ReactJS that use RES
 The course also contains a section on GraphQL, a modern alternative to REST APIs.
 The course covers testing, configuration and environment management, the use of databases for storing the application’s data amongst other things.
 
-if you wnt to find out more or try it for yourself visit: https://fullstackopen.com/en/
+if you want to find out more or try it for yourself visit: https://fullstackopen.com/en/
