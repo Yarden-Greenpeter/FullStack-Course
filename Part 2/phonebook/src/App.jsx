@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Input = ({label, value, set}) => {
   const handleNoteChange = event => {
@@ -59,17 +60,23 @@ const Persons = ({persons, sub}) => {
   )
 }
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Yarden Greenpeter' , number: '054-8315145', id: 0 },
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setName] = useState('');
   const [newNumber, setNumber] = useState('');
   const [id, setID] = useState(persons.length+1);
   const [sub, setSub] = useState('')
+
+  useEffect (() => {
+    console.log('effect')
+    const eventHandler = responce => {
+      console.log('promise fulfilled')
+      setPersons(responce.data)
+    }
+
+    const promise = axios.get('http://localhost:3001/persons')
+
+    promise.then(eventHandler)
+  }, [])
 
   const children = {
     persons, setPersons,
@@ -77,6 +84,7 @@ const App = () => {
     newNumber, setNumber,
     id, setID,
   };
+
   return (
     <div>
       <h2>Phonebook</h2>
