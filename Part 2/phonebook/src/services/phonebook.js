@@ -10,6 +10,7 @@ const getAll = () => {
             .catch(error => {
                 console.log(`Failed to fetch server json data`)
                 console.log(error)
+                throw error
             })
     )
 }
@@ -22,6 +23,7 @@ const create = (newObject) => {
             .catch(error => {
                 console.log(`Failed to update ${newObject}`)
                 console.log(error)
+                throw error
             })
     )
 }
@@ -34,6 +36,7 @@ const update = (id, newObject) => {
             .catch(error => {
                 console.log(`Failed to update object with id: ${id}`)
                 console.log(error)
+                throw error
             })
     )
 }
@@ -46,6 +49,7 @@ const remove = (id) => {
             .catch(error => {
                 console.log(`Failed to remove object with id: ${id}`)
                 console.log(error)
+                throw error
             })
     )
 }

@@ -2,7 +2,7 @@
 const Persons = ({persons, sub, handleDelete}) => {
     return (
       persons
-        .filter(person => person.name.toLowerCase().includes(sub.toLowerCase()))
+        .filter(person => person && person.name && person.name.toLowerCase().includes(sub.toLowerCase()))
           .map(person => <PersonRow key={person.id} person={person} handleDelete={handleDelete} />)
     )
   }
