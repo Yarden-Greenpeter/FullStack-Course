@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebook from './services/phonebook';
 
 const Input = ({label, value, set}) => {
   const handleNoteChange = event => {
     set(event.target.value);
   };
+
   return (
   <div>
     {label}: <input 
@@ -14,29 +15,55 @@ const Input = ({label, value, set}) => {
   )
 }
 
-const PersonForm = ({persons, setPersons,newName, setName,newNumber, setNumber, id, setID,}) => {
+const PersonForm = ({persons, setPersons, newName, setName, newNumber, setNumber}) => {
   const addPerson =(event) => {
     event.preventDefault()
     console.log(newName, " ", newNumber)
 
+    const isNewName = () => (persons.find(p => p.name === newName) === undefined)
+
+    const isNewNumber = () => (persons.find(p => p.number === newNumber) === undefined)
+
+    const isValidDetails = (person) => (person.number != '' && person.name != '')
+
     const isNew = (person) => {
       return (
-        (persons.find(person => person.name === newName || person.number === newNumber) === undefined) &&
-        (person.number != '' && person.name != '')
+        isValidDetails(person) && isNewName() && isNewNumber()
       )
     }
+    const isFamilier = (person) => {
+      return (isValidDetails(person) && !isNewName() && isNewNumber())
+    }
+    const person = {
+      name : newName, 
+      number : newNumber
+    }
 
-    const person = {name : newName, number : newNumber, id: id}
     if(isNew(person)){
-      setPersons(persons.concat(person))
-      setName('')
-      setNumber('')
-      setID(id+1)
+      phonebook
+        .create(person)
+        .then( returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setName('')
+          setNumber('')
+        })
+    } else if(isFamilier(person)){
+      const existingPerson = persons.find(p => p.name === newName) // Get the existing person with ID
+      const confirmed = window.confirm(`Update ${existingPerson.name}'s number from ${existingPerson.number} to ${newNumber}?`)
+      
+      if(confirmed) {
+        phonebook
+          .update(existingPerson.id, {...existingPerson, number: newNumber}) // Use the ID from persons list
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id === existingPerson.id ? updatedPerson : p))
+            setName('')
+            setNumber('')
+          })
+      }
     } else{
       const msg = `${newName} - ${newNumber} is already added to phonebook or invalid`
       alert(msg);
     }
-
   }
 
   return (
@@ -47,43 +74,58 @@ const PersonForm = ({persons, setPersons,newName, setName,newNumber, setNumber, 
         <button type="submit">add</button>
       </div>
     </form>
-  )
-}
+  )}
 
-const PersonRow = ({person}) => <li>{person.name} - {person.number}</li> 
+const PersonRow = ({person , handleDelete}) => {
+  return (
+  <li>
+    {person.name}  {person.number}
+    <button onClick={() => handleDelete(person)}>delete</button>
+  </li> 
+)}
 
-const Persons = ({persons, sub}) => {
+const Persons = ({persons, sub, handleDelete}) => {
   return (
     persons
       .filter(person => person.name.toLowerCase().includes(sub.toLowerCase()))
-        .map(person => <PersonRow key={person.id} person={person} />)
+        .map(person => <PersonRow key={person.id} person={person} handleDelete={handleDelete} />)
   )
 }
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setName] = useState('');
   const [newNumber, setNumber] = useState('');
-  const [id, setID] = useState(persons.length+1);
   const [sub, setSub] = useState('')
 
   useEffect (() => {
-    console.log('effect')
-    const eventHandler = responce => {
-      console.log('promise fulfilled')
-      setPersons(responce.data)
-    }
-
-    const promise = axios.get('http://localhost:3001/persons')
-
-    promise.then(eventHandler)
+      phonebook
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
+      })
   }, [])
 
   const children = {
     persons, setPersons,
     newName, setName,
     newNumber, setNumber,
-    id, setID,
   };
+
+  const handleDelete = (person) => {
+    const confirmed = window.confirm(`Delete ${person.name} ?`)
+  
+    if(confirmed){
+      phonebook
+        .remove(person.id)
+        .then(
+          removedPerson => setPersons(persons.filter(p => p.id !== person.id)), 
+          () => console.log(`at handleDelete couldn't delete: ${person.name} identifier: ${person.id}`)
+      )
+    }
+    else{
+      console.log(`user decided not to delete: ${person.name} id-${person.id}`)
+    }
+  }
 
   return (
     <div>
@@ -97,9 +139,10 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={persons} sub={sub} />
+      <Persons persons={persons} sub={sub} handleDelete={handleDelete}/>
     </div>
   )
 }
+
 
 export default App
