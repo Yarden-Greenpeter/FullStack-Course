@@ -1,9 +1,22 @@
-.error {
-  color: green;
-  background: lightgrey;
+/* Base notification styles */
+.notification {
   font-size: 20px;
   border-style: solid;
+  border-width: 2px;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.notification.success {
+  color: darkgreen;
+  background: lightgreen;
+  border-color: green;
+}
+
+.notification.error {
+  color: darkred;
+  background: lightcoral;
+  border-color: red;
 }

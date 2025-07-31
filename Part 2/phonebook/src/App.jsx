@@ -10,7 +10,19 @@ const App = () => {
   const [newName, setName] = useState('');
   const [newNumber, setNumber] = useState('');
   const [sub, setSub] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
+
+  const showNotification = (message, type = 'success') => {
+    setNotificationMessage(message)
+    setNotificationType(type)
+    
+    setTimeout(() => {
+      setNotificationMessage(null)
+      setNotificationType(null)
+    }, 5000)
+  }
 
   useEffect (() => {
       phonebook
@@ -24,7 +36,7 @@ const App = () => {
     persons, setPersons,
     newName, setName,
     newNumber, setNumber,
-    setErrorMessage
+    showNotification
   };
 
   const handleDelete = (person) => {
@@ -34,8 +46,14 @@ const App = () => {
       phonebook
         .remove(person.id)
         .then(
-          removedPerson => setPersons(persons.filter(p => p.id !== person.id)), 
-          () => console.log(`at handleDelete couldn't delete: ${person.name} identifier: ${person.id}`)
+          removedPerson => {
+            setPersons(persons.filter(p => p.id !== person.id))
+            showNotification(`${person.name} was deleted`, 'success')
+          }, 
+          () => {
+            console.log(`at handleDelete couldn't delete: ${person.name} identifier: ${person.id}`)
+            showNotification(`Failed to delete ${person.name}`, 'error')
+          }
       )
     }
     else{
@@ -46,7 +64,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
+      <Notification message={notificationMessage} type={notificationType} />
       
       <Input label="filter shown with" value={sub} set={setSub} />
 
