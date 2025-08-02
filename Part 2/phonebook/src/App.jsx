@@ -58,7 +58,7 @@ const App = () => {
         console.log(`Error deleting person:`, error)
         if (error.response && error.response.status === 404) {
           setPersons(persons.filter(p => p.id !== person.id))
-          showNotification(`${person.name} was already removed from server`, 'error')
+          showNotification(`information of ${person.name} has already removed from server`, 'error')
         } else {
           showNotification(`Failed to delete ${person.name}`, 'error')
         }})
