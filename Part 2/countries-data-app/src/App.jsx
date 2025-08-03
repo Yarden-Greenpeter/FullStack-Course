@@ -1,21 +1,17 @@
 import { useState, useEffect } from 'react'
 import { TooManyResults, CountryList, CountryDetails } from './components/countries.jsx'
 
-const MAX_COUNTRIES = 10;
-const BASE_URL = 'https://studies.cs.helsinki.fi/restcountries/api';
+const MAX_COUNTRIES = Number(import.meta.env.VITE_MAX_COUNTRIES_DISPLAY) || 10;;
+const BASE_URL = import.meta.env.VITE_COUNTRIES_API_URL;
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [allCountryNames, setAllCountryNames] = useState([])
   const [filteredNames, setFilteredNames] = useState([])
   const [selectedCountry, setSelectedCountry] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [loadingCountry, setLoadingCountry] = useState(false)
-
 
   useEffect(() => {
     const fetchAllCountryNames = async () => {
-      setLoading(true)
       try {
         const response = await fetch(`${BASE_URL}/all`)
         if (response.ok) {
@@ -33,8 +29,6 @@ function App() {
         const mockNames = ['Finland', 'France', 'Sweden', 'Norway', 'Denmark']
         setAllCountryNames(mockNames)
         console.log('Using mock country names')
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -58,16 +52,12 @@ function App() {
 
     // If exactly 1 result, fetch full country data immediately
     if (filtered.length === 1) {
-      setLoadingCountry(true)
       fetchSingleCountry(filtered[0])
         .then(countryData => {
           setSelectedCountry(countryData)
         })
         .catch(error => {
           setSelectedCountry(null)
-        })
-        .finally(() => {
-          setLoadingCountry(false)
         })
     } else {
       setSelectedCountry(null)
@@ -81,6 +71,7 @@ function App() {
         const countryData = await response.json()
         console.log(`Fetched details for: ${countryName}`)
         return countryData
+      } else {
         throw new Error(`Failed to fetch ${countryName}`)
       }
     } catch (error) {
@@ -94,10 +85,6 @@ function App() {
   }
   
   const renderResults = () => {
-    if (loading) {
-      return <div>Loading countries...</div>
-    }
-
     if (!searchQuery.trim()) {
       return null
     }
@@ -116,9 +103,6 @@ function App() {
     }
 
     if (count === 1) {
-      if (loadingCountry) {
-        return <div>Loading country details...</div>
-      }
       return selectedCountry ? <CountryDetails country={selectedCountry} /> : <div>Loading...</div>
     }
 

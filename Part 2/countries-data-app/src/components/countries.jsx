@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { WeatherDetails } from './weather.jsx'
 
 const TooManyResults = () => (
     <div>
@@ -109,7 +110,9 @@ const TooManyResults = () => (
               style={{ width: '150px', border: '1px solid #ccc' }}
             />
           </div>
+          
         )}
+        <WeatherDetails capital={country.capital?.[0]} />
       </div>
     )
   }
