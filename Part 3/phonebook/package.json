@@ -6,7 +6,9 @@
   "scripts": {
     "test": "test",
     "dev": "node --watch index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build:ui": "rm -rf dist && cd '../../Part 2/phonebook' && npm run build && cp -r dist '../../Part 3/phonebook'",
+    "deploy:full": "npm run build:ui && git add . && git commit -m 'uibuild' && git push"
   },
   "author": "",
   "license": "ISC",

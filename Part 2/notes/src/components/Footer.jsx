@@ -9,7 +9,7 @@ const Footer = () => {
         <div style={footerStyle}>
             <br />
             <p>
-                Note app, Department of Computer Science, University of Helinki 2025
+                Note App, Yarden Greenpeter
             </p>
         </div>
 

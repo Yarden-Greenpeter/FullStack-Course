@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(express.static('dist'))
 
 app.use((req, res, next) => {
     if (req.method !== 'POST') {
@@ -41,7 +42,7 @@ let persons = [
     }
 ]
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/phonebook', (req, res) => {
     res.json(persons)
 })
 
@@ -67,7 +68,7 @@ app.get('/info', (request, response) => {
     `)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/phonebook/:id', (req, res) => {
     const id = req.params.id;
     const person = persons.find(p => p.id === id);
 
@@ -78,7 +79,7 @@ app.get('/api/persons/:id', (req, res) => {
     }
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/phonebook/:id', (req, res) => {
     const id = req.params.id;
     persons = persons.filter(p => p.id != id);
 
@@ -89,7 +90,7 @@ const generateId = () =>{
     return Math.floor(Math.random() * (25000)) + 1
 }
 
-app.post('/api/persons', postLogger, (req, res) => {
+app.post('/api/phonebook', postLogger, (req, res) => {
     const body = req.body;
     const newName = body.name;
     const newNumber = body.number;
@@ -130,7 +131,7 @@ app.post('/api/persons', postLogger, (req, res) => {
 
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`server is running on port: ${PORT}`)
 })
