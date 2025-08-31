@@ -33,9 +33,14 @@ const PersonForm = ({persons, setPersons, newName, setName, newNumber, setNumber
           setName('')
           setNumber('')
           showNotification(`Added ${person.name}`, 'success')
-        }).catch(error => {
+        })
+        .catch(error => {
           console.log('Error creating person:', error)
-          showNotification(`Failed to add ${person.name}`, 'error')
+          if (error.response.data.type === 'ValidationError') {
+            showNotification(error.response.data.error, 'error')
+          } else {
+            showNotification(`Failed to add ${person.name}`, 'error')
+          }
         })
     } else if(isFamilier(person)){
       const existingPerson = persons.find(p => p.name === newName) // Get the existing person with ID
